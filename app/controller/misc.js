@@ -30,7 +30,6 @@ const spec = require('../comm/spec')
  *                 platform: 'darwin/x64'
  */
 exports.getApiInfo = ctx => {
-  // BUSINESS LOGIC
   const environments = {
     nodeVersion: process.versions['node'],
     hostname: os.hostname(),

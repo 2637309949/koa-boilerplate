@@ -1,6 +1,6 @@
 'use strict'
 
-const ApplicationError = require('../application-error')
+const ApplicationError = require('../application')
 
 
 /**

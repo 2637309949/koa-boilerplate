@@ -1,8 +1,8 @@
 'use strict'
 
-const config = require('./comm/config')
+const App = require('./comm/koa')
 const apm = require('./comm/logger/apm')
-const App = require('./app')
+const config = require('./comm/config')
 const logger = require('./comm/logger')
 
 const app = new App()

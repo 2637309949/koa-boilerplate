@@ -5,7 +5,7 @@ const Response = require('../util/response')
 const { InvalidRequestBodyFormat } = require('../error')
 
 module.exports = () => {
-  return async function errorHandler(ctx, next) {
+  return async function(ctx, next) {
     try {
       await next()
       // Respond 404 Not Found for unhandled request

@@ -1,15 +1,16 @@
 'use strict'
 
 const Koa = require('koa')
-const logging = require('./comm/middleware/logging')
-const cors = require('./comm/middleware/cors')
-const apmMiddleware = require('./comm/middleware/apm')
-const requestId = require('./comm/middleware/traceid')
-const bodyParser = require('./comm/middleware/body-parser')
-const errorHandler = require('./comm/middleware/error-handler')
-const corsConfig = require('./comm/config/cors')
-const logger = require('./comm/logger')
-const router = require('./route')
+const logging = require('../middleware/logger')
+const serializers = require('../logger/http').serializers
+const cors = require('../middleware/cors')
+const apmMiddleware = require('../middleware/apm')
+const requestId = require('../middleware/traceid')
+const bodyParser = require('../middleware/parser')
+const errorHandler = require('../middleware/unhandled')
+const corsConfig = require('../config/cors')
+const logger = require('../logger')
+const router = require('../../route')
 
 class App extends Koa {
   constructor(...params) {
@@ -26,7 +27,7 @@ class App extends Koa {
     this.use(errorHandler())
     this.use(apmMiddleware())
     this.use(requestId())
-    this.use(logging({ logger, serializers: logger.serializers }))
+    this.use(logging({ logger, serializers }))
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))
     this.use(
       cors({
