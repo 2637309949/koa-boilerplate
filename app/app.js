@@ -1,7 +1,7 @@
 'use strict'
 
 const Koa = require('koa')
-const logging = require('@kasa/koa-logging')
+const logging = require('./comm/middleware/logging')
 const cors = require('./comm/middleware/cors')
 const apmMiddleware = require('./comm/middleware/apm')
 const requestId = require('./comm/middleware/traceid')
@@ -26,7 +26,7 @@ class App extends Koa {
     this.use(errorHandler())
     this.use(apmMiddleware())
     this.use(requestId())
-    this.use(logging({ logger, overrideSerializers: true }))
+    this.use(logging({ logger, serializers: logger.serializers }))
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))
     this.use(
       cors({

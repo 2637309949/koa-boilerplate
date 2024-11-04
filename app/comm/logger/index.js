@@ -5,12 +5,7 @@ const config = require('../config/logger')
 
 function reqSerializer(ctx = {}) {
   return {
-    method: ctx.method, 
-    path: ctx.path,
     url: ctx.url,
-    headers: ctx.headers,
-    protocol: ctx.protocol,
-    ip: ctx.ip,
     query: ctx.query
   }
 }
@@ -39,19 +34,20 @@ function resSerializer(ctx = {}) {
   return {
     statusCode: ctx.status,
     duration: ctx.duration,
-    type: ctx.type,
-    headers: ctx.response.headers,
     body,
   }
 }
 
+const serializers = {
+  req: reqSerializer,
+  res: resSerializer,
+  err: errSerializer
+}
+
 const logger = pino({
   ...config,
-  serializers: {
-    req: reqSerializer,
-    res: resSerializer,
-    err: errSerializer
-  }
+  serializers
 })
 
+logger.serializers = serializers
 module.exports = logger
