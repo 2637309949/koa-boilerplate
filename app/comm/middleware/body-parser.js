@@ -1,7 +1,7 @@
 'use strict'
 
 const bodyParser = require('koa-bodyparser')
-const { InvalidRequestBodyFormat } = require('../errors')
+const { InvalidRequestBodyFormat } = require('../error')
 
 module.exports = (options = {}) => {
   return bodyParser({

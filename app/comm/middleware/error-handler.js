@@ -1,8 +1,8 @@
 'use strict'
 
 const debug = require('debug')('koa:error-handler')
-const Response = require('../utils/response')
-const { InvalidRequestBodyFormat } = require('../errors')
+const Response = require('../util/response')
+const { InvalidRequestBodyFormat } = require('../error')
 
 module.exports = () => {
   return async function errorHandler(ctx, next) {

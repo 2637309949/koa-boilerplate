@@ -2,7 +2,7 @@
 
 const path = require('path')
 const swaggerJSDoc = require('swagger-jsdoc')
-const pkginfo = require('../../package.json')
+const pkginfo = require('../../../package.json')
 
 const info = {
   title: pkginfo.name,

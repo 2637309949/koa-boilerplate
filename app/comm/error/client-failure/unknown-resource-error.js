@@ -1,6 +1,6 @@
 'use strict'
 
-const ClientFailure = require('./')
+const ClientFailure = require('.')
 
 
 /**

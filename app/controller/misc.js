@@ -2,7 +2,7 @@
 
 const os = require('os')
 const pkginfo = require('../../package.json')
-const spec = require('../spec')
+const spec = require('../comm/spec')
 
 
 /**

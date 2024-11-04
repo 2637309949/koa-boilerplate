@@ -18,7 +18,7 @@
   "main": "app",
   "scripts": {
     "start": "node app",
-    "dev": "cross-env NODE_ENV=development nodemon --quiet | pino-pretty -c -t \"yyyy-mm-dd HH:MM:ss\" -i pid,name,hostname",
+    "dev": "cross-env NODE_ENV=development nodemon --quiet | pino-pretty -S -c -t \"yyyy-mm-dd HH:MM:ss\" -i pid,name,hostname",
     "docs": "docsify serve docs",
     "test": "NODE_ENV=test jest --passWithNoTests",
     "test:unit": "npm test -- test/unit",

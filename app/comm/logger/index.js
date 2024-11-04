@@ -1,7 +1,7 @@
 'use strict'
 
 const pino = require('pino')
-const config = require('./config/logger')
+const config = require('../config/logger')
 
 function reqSerializer(ctx = {}) {
   return {
@@ -27,7 +27,6 @@ function errSerializer(err) {
     stack: err.stack
   }
 }
-
 
 function resSerializer(ctx = {}) {
   ctx.body = ctx.body || {}

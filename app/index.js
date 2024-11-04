@@ -1,9 +1,9 @@
 'use strict'
 
-const config = require('./config')
-const apm = require('./apm')
+const config = require('./comm/config')
+const apm = require('./comm/logger/apm')
 const App = require('./app')
-const logger = require('./logger')
+const logger = require('./comm/logger')
 
 const app = new App()
 

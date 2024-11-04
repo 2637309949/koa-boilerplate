@@ -2,14 +2,14 @@
 
 const Koa = require('koa')
 const logging = require('@kasa/koa-logging')
-const cors = require('./middlewares/cors')
-const apmMiddleware = require('./middlewares/apm')
-const requestId = require('./middlewares/traceid')
-const bodyParser = require('./middlewares/body-parser')
-const errorHandler = require('./middlewares/error-handler')
-const corsConfig = require('./config/cors')
-const logger = require('./logger')
-const router = require('./routes')
+const cors = require('./comm/middleware/cors')
+const apmMiddleware = require('./comm/middleware/apm')
+const requestId = require('./comm/middleware/traceid')
+const bodyParser = require('./comm/middleware/body-parser')
+const errorHandler = require('./comm/middleware/error-handler')
+const corsConfig = require('./comm/config/cors')
+const logger = require('./comm/logger')
+const router = require('./route')
 
 class App extends Koa {
   constructor(...params) {
@@ -26,7 +26,7 @@ class App extends Koa {
     this.use(errorHandler())
     this.use(apmMiddleware())
     this.use(requestId())
-    this.use(logging({ logger, overrideSerializers: false }))
+    this.use(logging({ logger, overrideSerializers: true }))
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))
     this.use(
       cors({
