@@ -24,7 +24,7 @@ class App extends Koa {
   _configureMiddlewares() {
     this.use(errorHandler())
     this.use(apmMiddleware())
-    this.use(requestId())
+    this.use(requestId({ exposeHeader: 'X-Request-Id' }))
     this.use(logging({ logger, serializers }))
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))
     this.use(
