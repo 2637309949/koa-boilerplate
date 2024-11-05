@@ -2,19 +2,19 @@
 
 const sz = require('../comm/sequelize')
 
-exports.QueryUserDB = ctx => {
+exports.QueryUserDB = (where) => {
     ctx.body = ''
 }
 
-exports.QueryUserDetailDB = ctx => {
+exports.QueryUserDetailDB = (where) => {
     ctx.body = ''
 }
 
-exports.UpdateUserDB = ctx => {
+exports.UpdateUserDB = (user) => {
     ctx.body = ''
 }
 
-exports.DeleteUserDB = ctx => {
+exports.DeleteUserDB = (user) => {
     ctx.body = ''
 }
 
