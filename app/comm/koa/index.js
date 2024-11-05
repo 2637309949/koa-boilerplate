@@ -10,7 +10,6 @@ const bodyParser = require('../middleware/parser')
 const errorHandler = require('../middleware/unhandled')
 const corsConfig = require('../config/cors')
 const logger = require('../logger')
-const router = require('../../route')
 
 class App extends Koa {
   constructor(...params) {
@@ -20,7 +19,6 @@ class App extends Koa {
     this.silent = this.env !== 'development' 
     this.servers = []
     this._configureMiddlewares()
-    this._configureRoutes()
   }
 
   _configureMiddlewares() {
@@ -39,9 +37,9 @@ class App extends Koa {
     )
   }
 
-  _configureRoutes() {
-    this.use(router.routes())
-    this.use(router.allowedMethods())
+  configureRoutes(route) {
+    this.use(route.routes())
+    this.use(route.allowedMethods())
   }
 
   listen(...args) {

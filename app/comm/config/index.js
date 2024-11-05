@@ -15,6 +15,9 @@ const configs = {
     port: process.env.APP_PORT || 7071
   },
   development: {
+    db: {
+      uri: 'mysql://myppdb:myppdb@172.30.12.123:3309/test'
+    }
   },
   test: {
     port: 7072,

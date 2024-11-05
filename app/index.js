@@ -4,8 +4,12 @@ const App = require('./comm/koa')
 const apm = require('./comm/logger/apm')
 const config = require('./comm/config')
 const logger = require('./comm/logger')
+const sequelize = require('./comm/sequelize')
+const defines = require('./models/model')
+const route = require('./route')
 
 const app = new App()
+app.configureRoutes(route)
 
 function handleError(err, ctx) {
   if (apm.active) {
@@ -31,6 +35,7 @@ app.on('error', handleError)
 
 // Start server
 if (!module.parent) {
+  sequelize.init(defines, config.db)
   const server = app.listen(config.port, config.host, () => {
     logger.info({ event: 'execute' }, `listening on ${config.host}:${config.port}, in ${config.env}`)
   })
