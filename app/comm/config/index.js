@@ -4,11 +4,15 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const env = process.env.NODE_ENV || 'development'
+const
+  name = process.env.APP_NAME || 'koa-boilerplate',
+  host =  process.env.APP_HOST || '0.0.0.0'
+
 const configs = {
   base: {
     env,
-    name: process.env.APP_NAME || 'koa-boilerplate',
-    host: process.env.APP_HOST || '0.0.0.0',
+    name,
+    host,
     port: 7070
   },
   production: {

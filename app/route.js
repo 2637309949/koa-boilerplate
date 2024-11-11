@@ -1,18 +1,19 @@
 'use strict'
 
 const Router = require('koa-router')
-const miscController = require('./controller/misc')
-const userController = require('./controller/user')
+const miscCtrl = require('./controller/misc')
+const userCtrl = require('./controller/user')
 
 const router = new Router()
-router.get('/', miscController.getApiInfo)
-router.get('/spec', miscController.getSwaggerSpec)
-router.get('/status', miscController.healthcheck)
+router.get('/', miscCtrl.getApiInfo)
+router.get('/spec', miscCtrl.getSwaggerSpec)
+router.get('/status', miscCtrl.healthcheck)
 
-router.get('/v1/user/handler/QueryUser', userController.QueryUser)
-router.get('/v1/user/handler/QueryUserDetail', userController.QueryUserDetail)
-router.get('/v1/user/handler/UpdateUser', userController.UpdateUser)
-router.get('/v1/user/handler/DeleteUser', userController.DeleteUser)
-router.get('/v1/user/handler/InsertUser', userController.InsertUser)
+router.get('/v1/user/QueryUser', userCtrl.QueryUser)
+router.get('/v1/user/QueryUserDetail', userCtrl.QueryUserDetail)
+router.get('/v1/user/UpdateUser', userCtrl.UpdateUser)
+router.get('/v1/user/DeleteUser', userCtrl.DeleteUser)
+router.get('/v1/user/InsertUser', userCtrl.InsertUser)
+router.get('/v1/user/SaveUser', userCtrl.SaveUser)
 
 module.exports = router

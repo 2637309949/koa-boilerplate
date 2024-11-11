@@ -19,3 +19,7 @@ exports.DeleteUser = ctx => {
 exports.InsertUser = ctx => {
     ctx.body = ''
 }
+
+exports.SaveUser = ctx => {
+    ctx.body = ''
+}

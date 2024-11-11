@@ -36,10 +36,10 @@ app.on('error', handleError)
 // Start server
 if (!module.parent) {
   sequelize.init(defines, config.db)
-  const server = app.listen(config.port, config.host, () => {
+  
+  app.listen(config.port, config.host, () => {
     logger.info({ event: 'execute' }, `listening on ${config.host}:${config.port}, in ${config.env}`)
-  })
-  server.on('error', handleError)
+  }).on('error', handleError)
 
   const errors = ['unhandledRejection', 'uncaughtException']
   errors.map(error => {
