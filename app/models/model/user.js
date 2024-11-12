@@ -41,7 +41,8 @@ module.exports = define(
     modelName('User'),
     options({
         tableName: 't_user',
-        timestamps: false
+        timestamps: true,
+        paranoid: true
     }),
     associate(function (User, models) {
         User.hasMany(models.Article)

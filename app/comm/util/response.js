@@ -33,20 +33,16 @@ const partialWithStatusCode422 = R.partial(withStatusCode, [STATUS_CODES.UNPROCE
 const curriedWithStatusCode = R.curry(withStatusCode)
 
 const toResponse = (statusCode, params = {}) => {
-  const { code = null, data = null, message = null } = params
-
+  // const { code = null, data = null, message = null } = params
   if (statusCode < 400) {
     return {
       status: 'success',
-      data,
-      message
+      ...params
     }
   } else {
     return {
       status: statusCode < 500 ? 'fail' : 'error',
-      code,
-      data,
-      message
+      ...params
     }
   }
 }

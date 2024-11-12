@@ -28,7 +28,7 @@ async function init(defines, opt = {}) {
         }
         define.associate.forEach(associate => {
             associate(model, sequelize.models)
-        });
+        })
     })
 }
 

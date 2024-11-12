@@ -1,8 +1,8 @@
 'use strict'
 
 const Router = require('koa-router')
-const miscCtrl = require('./controller/misc')
-const userCtrl = require('./controller/user')
+const miscCtrl = require('./handler/misc')
+const userCtrl = require('./handler/user')
 
 const router = new Router()
 router.get('/', miscCtrl.getApiInfo)

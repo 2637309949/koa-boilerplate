@@ -3,10 +3,10 @@
 const dotenv = require('dotenv')
 dotenv.config()
 
-const env = process.env.NODE_ENV || 'development'
 const
   name = process.env.APP_NAME || 'koa-boilerplate',
-  host =  process.env.APP_HOST || '0.0.0.0'
+  host =  process.env.APP_HOST || '0.0.0.0',
+  env = process.env.NODE_ENV || 'development'
 
 const configs = {
   base: {

@@ -1,6 +1,6 @@
 'use strict'
 
-const { isString, isUndefined } = require('util')
+const { isUndefined } = require('util')
 const got = require('got')
 const debug = require('debug')('api:http')
 
@@ -16,7 +16,7 @@ class HttpApi {
     debug('Create an instance')
 
     const baseUrl = this.options.baseUrl
-    if (!(baseUrl && isString(baseUrl))) {
+    if (!(baseUrl && typeof baseUrl === 'string')) {
       throw new TypeError('`baseUrl` is required.')
     }
 
@@ -39,7 +39,7 @@ class HttpApi {
 
   _checkParams(params, required = []) {
     const isSufficient = required.every(
-      param => !isUndefined(params[param])
+      param => params[param] !== undefined
     )
     if (!isSufficient) {
       throw new Error(`Required Parameters: ${required}`)

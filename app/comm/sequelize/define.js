@@ -1,10 +1,21 @@
 'use strict'
 
+const { DataTypes } = require('sequelize')
+
+const defaultOpts = {
+    attributes: {
+        total: { type: DataTypes.VIRTUAL }
+    },
+    options: {},
+    associate: [],
+    addHook: []
+}
+
 module.exports.define = (...options) => {
     return options.reduce((acc, curr) => {
         curr(acc)
         return acc
-    }, {attributes:{}, options:{}, associate:[], addHook:[]})
+    }, defaultOpts)
 }
 
 module.exports.modelName = (modelName) => {
