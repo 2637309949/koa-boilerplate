@@ -3,7 +3,7 @@
 const os = require('os')
 const pkginfo = require('../../package.json')
 const spec = require('../comm/spec')
-
+const hdl = {}
 
 /**
  * @swagger
@@ -29,7 +29,7 @@ const spec = require('../comm/spec')
  *                 hostname: 'my-pc'
  *                 platform: 'darwin/x64'
  */
-exports.getApiInfo = ctx => {
+hdl.getApiInfo = ctx => {
   const environments = {
     nodeVersion: process.versions['node'],
     hostname: os.hostname(),
@@ -59,7 +59,7 @@ exports.getApiInfo = ctx => {
  *         x-summary: OK
  *         description: Describe Swagger Open API Specification
  */
-exports.getSwaggerSpec = ctx => {
+hdl.getSwaggerSpec = ctx => {
   ctx.body = spec
 }
 
@@ -81,7 +81,7 @@ exports.getSwaggerSpec = ctx => {
  *             example:
  *               status: 'pass'
  */
-exports.healthcheck = ctx => {
+hdl.healthcheck = ctx => {
   // TODO: Improve healthcheck logic
   // status: ['pass', 'fail', 'warn']
   const data = {
@@ -89,3 +89,5 @@ exports.healthcheck = ctx => {
   }
   ctx.body = data
 }
+
+module.exports = hdl

@@ -9,8 +9,9 @@ const {
 } = require('../comm//error')
 const userDB = require('./user.db')
 const sz = require('../comm/sequelize')
+const hdl = {}
 
-exports.QueryUser = async ctx => {
+hdl.QueryUser = async ctx => {
     const { name, pageNo = 1, pageSize = 10 } = ctx.query
     const rsp = {}
     if (name === undefined) {
@@ -28,7 +29,7 @@ exports.QueryUser = async ctx => {
     Response.success(ctx, rsp)
 }
 
-exports.QueryUserDetail = async ctx => {
+hdl.QueryUserDetail = async ctx => {
     const { id } = ctx.query
     const rsp = {}
     if (!id) {
@@ -46,7 +47,7 @@ exports.QueryUserDetail = async ctx => {
     Response.success(ctx, rsp)
 }
 
-exports.UpdateUser = async ctx => {
+hdl.UpdateUser = async ctx => {
     const { id, name, email } = ctx.request.body
     const rsp = {}
     if (!id) {
@@ -76,7 +77,7 @@ exports.UpdateUser = async ctx => {
     Response.success(ctx, rsp)
 }
 
-exports.DeleteUser = async ctx => {
+hdl.DeleteUser = async ctx => {
     const { id } = ctx.request.body
     const rsp = {}
     if (!id) {
@@ -89,7 +90,7 @@ exports.DeleteUser = async ctx => {
     Response.success(ctx, rsp)
 }
 
-exports.InsertUser = async ctx => {
+hdl.InsertUser = async ctx => {
     const { name, email } = ctx.request.body
     const rsp = {}
     if (!name) {
@@ -119,7 +120,7 @@ exports.InsertUser = async ctx => {
     Response.success(ctx, rsp)
 }
 
-exports.SaveUser = async ctx => {
+hdl.SaveUser = async ctx => {
     const { id, name, email } = ctx.request.body
     const rsp = {}
     if (!name) {
@@ -157,3 +158,5 @@ exports.SaveUser = async ctx => {
     }
     Response.success(ctx, rsp)
 }
+
+module.exports = hdl
