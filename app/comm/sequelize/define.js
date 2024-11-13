@@ -4,9 +4,14 @@ const { DataTypes } = require('sequelize')
 
 const defaultOpts = {
     attributes: {
-        total: { type: DataTypes.VIRTUAL }
+        total: { 
+            type: DataTypes.VIRTUAL 
+        }
     },
-    options: {},
+    options: {
+        timestamps: false,  // 不使用 createdAt 和 updatedAt 字段
+        paranoid: false     // 不启用软删除功能
+    },
     associate: [],
     addHook: []
 }

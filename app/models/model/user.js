@@ -1,7 +1,13 @@
 'use strict'
 
+const { 
+    define, 
+    modelName, 
+    attributes, 
+    options, 
+    associate 
+} = require('../../comm/sequelize').define
 const { DataTypes } = require('sequelize')
-const { define, modelName, attributes, options, associate } = require('../../comm/sequelize').define
 
 module.exports = define(
     attributes({
@@ -36,15 +42,19 @@ module.exports = define(
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
+        },
+        deletedAt: {
+          type: DataTypes.DATE,
+          allowNull: true
         }
     }),
     modelName('User'),
+    associate(function (User, models) {
+        User.hasMany(models.Article)
+    }),
     options({
         tableName: 't_user',
         timestamps: true,
         paranoid: true
-    }),
-    associate(function (User, models) {
-        User.hasMany(models.Article)
     })
 )

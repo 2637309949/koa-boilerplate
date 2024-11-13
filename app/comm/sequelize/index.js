@@ -11,7 +11,7 @@ function globalSequelize() {
 
 async function init(defines, opt = {}) {
     try {
-        sequelize = new Sequelize(opt.uri)
+        sequelize = new Sequelize(opt.uri, { pool: opt.pool })
         await sequelize.authenticate()
         debug('Connection has been established successfully.')
     } catch (error) {
@@ -32,8 +32,11 @@ async function init(defines, opt = {}) {
     })
 }
 
+function QueryOpts(where) {
+    return { where, attributes: { exclude: ['deletedAt'] } }
+}
+
+module.exports.init = init
+module.exports.QueryOpts = QueryOpts
 module.exports.globalSequelize = globalSequelize
 module.exports.define = define
-module.exports.init = init
-
-

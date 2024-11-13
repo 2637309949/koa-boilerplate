@@ -2,37 +2,28 @@
 
 const Response = require('../comm/util/response')
 const logger = require('../comm/logger')
-const { InvalidRequestBodyFormat, InvalidRequestQueryFormat } = require('../comm//error')
+const {
+    InvalidRequestQueryFormat
+} = require('../comm//error')
 const userDB = require('./user.db')
+const sz = require('../comm/sequelize')
 
 exports.QueryUser = async ctx => {
-    try {
-        const { name, pageNo = 1, pageSize = 10 } = ctx.query
-        const where = { name }
-        const rsp = {}
-        if (name === undefined) {
-            throw new InvalidRequestQueryFormat()
-        }
-
-        const options = {where,attributes: { exclude: ['deletedAt'] }}
-        const [users, total] = await userDB.QueryUserDB(options, 0)
-        rsp.data = users
-        rsp.totalCount = total
-        rsp.curPage = pageNo
-        rsp.totalPage = (total / pageSize) | 0
-        if (rsp.totalCount % pageSize !== 0) {
-            rsp.totalPage += 1
-        }
-        Response.success(ctx, rsp)
-    } catch (err) {
-        logger.error({ err, event: 'error' }, 'Unhandled exception occured')
-        if (err instanceof InvalidRequestBodyFormat) {
-            return Response.unprocessableEntity(ctx, Response.INVALID_REQUEST_BODY_FORMAT)
-        } else if (err instanceof InvalidRequestQueryFormat) {
-            return Response.unprocessableEntity(ctx, Response.INVALID_REQUEST)
-        }
-        Response.internalServerError(ctx, Response.UNKNOWN_ERROR)
+    const { name, pageNo = 1, pageSize = 10 } = ctx.query
+    const where = { name }
+    const rsp = {}
+    if (name === undefined) {
+        throw new InvalidRequestQueryFormat('解析参数失败, name未设置')
     }
+
+    const options = sz.QueryOpts(where)
+    const [users, total] = await userDB.QueryUserDB(options, null)
+    rsp.data = users
+    rsp.totalCount = total
+    rsp.curPage = pageNo
+    rsp.totalPage = (total / pageSize) | 0
+    rsp.totalPage += (rsp.totalCount % pageSize !== 0 ? 1 : 0)
+    Response.success(ctx, rsp)
 }
 
 exports.QueryUserDetail = ctx => {
