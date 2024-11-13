@@ -3,6 +3,7 @@
 const Response = require('../comm/util/response')
 const logger = require('../comm/logger')
 const {
+    InvalidRequestBodyFormat,
     InvalidRequestQueryFormat,
     ApplicationError
 } = require('../comm//error')
@@ -49,10 +50,10 @@ exports.UpdateUser = async ctx => {
     const { id, name, email } = ctx.request.body
     const rsp = {}
     if (!id) {
-        throw new InvalidRequestQueryFormat('解析参数失败, id未设置')
+        throw new InvalidRequestBodyFormat('解析参数失败, id未设置')
     }
     if (!name && !email) {
-        throw new InvalidRequestQueryFormat('至少提供一个更新字段，如name或email')
+        throw new InvalidRequestBodyFormat('至少提供一个更新字段，如name或email')
     }
 
     const updateFields = { id }
@@ -76,13 +77,83 @@ exports.UpdateUser = async ctx => {
 }
 
 exports.DeleteUser = async ctx => {
-    ctx.body = ''
+    const { id } = ctx.request.body
+    const rsp = {}
+    if (!id) {
+        throw new InvalidRequestBodyFormat('解析参数失败, id未设置')
+    }
+
+    const where = { id }
+    await userDB.DeleteUserDB(where)
+    rsp.data = where
+    Response.success(ctx, rsp)
 }
 
 exports.InsertUser = async ctx => {
-    ctx.body = ''
+    const { name, email } = ctx.request.body
+    const rsp = {}
+    if (!name) {
+        throw new InvalidRequestBodyFormat('解析参数失败, name未设置')
+    }
+    if (!email) {
+        throw new InvalidRequestBodyFormat('解析参数失败, email未设置')
+    }
+
+    const insertFields = {}
+    if (name) insertFields.name = name
+    if (email) insertFields.email = email
+
+    const where = { email }
+    const options = sz.QueryOpts(where)
+    const user = await userDB.QueryUserDetailDB(options)
+    if (user) {
+        throw new ApplicationError(`用户Email ${email} 已存在`)
+    }
+
+    const insertedUser = await userDB.InsertUserDB(insertFields)
+    if (!insertedUser) {
+        throw new ApplicationError('新增用户失败')
+    }
+
+    rsp.data = insertedUser
+    Response.success(ctx, rsp)
 }
 
 exports.SaveUser = async ctx => {
-    ctx.body = ''
+    const { id, name, email } = ctx.request.body
+    const rsp = {}
+    if (!name) {
+        throw new InvalidRequestBodyFormat('解析参数失败, name未设置')
+    }
+    if (!email) {
+        throw new InvalidRequestBodyFormat('解析参数失败, email未设置')
+    }
+
+    const updateFields = {}
+    if (name) updateFields.name = name
+    if (email) updateFields.email = email
+
+    const where = {}
+    if (id) {
+        where.id = id
+    } else {
+        where.email = email
+    }
+    const options = sz.QueryOpts(where)
+    const user = await userDB.QueryUserDetailDB(options)
+    if (!user) {
+        const insertedUser = await userDB.InsertUserDB(updateFields)
+        if (!insertedUser) {
+            throw new ApplicationError('新增用户失败')
+        }
+        rsp.data = insertedUser
+    } else {
+        updateFields.id = user.id
+        const updatedUser = await userDB.UpdateUserDB(updateFields)
+        if (!updatedUser) {
+            throw new ApplicationError('更新用户信息失败')
+        }
+        rsp.data = updateFields
+    }
+    Response.success(ctx, rsp)
 }

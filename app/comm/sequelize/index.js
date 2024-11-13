@@ -33,7 +33,7 @@ async function init(defines, opt = {}) {
 }
 
 function QueryOpts(where) {
-    return { where, attributes: { exclude: ['deletedAt'] } }
+    return { where, attributes: { exclude: ['deletedAt','password'] } }
 }
 
 module.exports.init = init
