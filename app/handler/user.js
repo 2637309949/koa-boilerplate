@@ -6,7 +6,7 @@ const {
     InvalidRequestBodyFormat,
     InvalidRequestQueryFormat,
     ApplicationError
-} = require('../comm//error')
+} = require('../comm/error')
 const userDB = require('./user.db')
 const sz = require('../comm/sequelize')
 const hdl = {}
