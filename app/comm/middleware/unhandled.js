@@ -4,7 +4,8 @@ const logger = require('../logger')
 const Response = require('../util/response')
 const {
   InvalidRequestBodyFormat,
-  InvalidRequestQueryFormat
+  InvalidRequestQueryFormat,
+  ApplicationError
 } = require('../error')
 
 module.exports = () => {
@@ -23,6 +24,9 @@ module.exports = () => {
         return
       } else if (err instanceof InvalidRequestQueryFormat) {
         Response.unprocessableEntity(ctx, { ...Response.INVALID_REQUEST, message: err.message })
+        return
+      } else if (err instanceof ApplicationError) {
+        Response.error(ctx, { ...Response.INTERNAL_ERROR, message: err.message })
         return
       }
       Response.internalServerError(ctx, Response.UNKNOWN_ERROR)

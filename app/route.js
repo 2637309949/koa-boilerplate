@@ -11,9 +11,9 @@ router.get('/status', miscCtrl.healthcheck)
 
 router.get('/v1/user/QueryUser', userCtrl.QueryUser)
 router.get('/v1/user/QueryUserDetail', userCtrl.QueryUserDetail)
-router.get('/v1/user/UpdateUser', userCtrl.UpdateUser)
-router.get('/v1/user/DeleteUser', userCtrl.DeleteUser)
-router.get('/v1/user/InsertUser', userCtrl.InsertUser)
-router.get('/v1/user/SaveUser', userCtrl.SaveUser)
+router.post('/v1/user/UpdateUser', userCtrl.UpdateUser)
+router.post('/v1/user/DeleteUser', userCtrl.DeleteUser)
+router.post('/v1/user/InsertUser', userCtrl.InsertUser)
+router.post('/v1/user/SaveUser', userCtrl.SaveUser)
 
 module.exports = router

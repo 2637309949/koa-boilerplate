@@ -12,10 +12,10 @@ exports.QueryUserDB = async (options, ...count) => {
     return [await User.findAll(options), total]
 }
 
-exports.QueryUserDetailDB = (count) => {
+exports.QueryUserDetailDB = (options) => {
     const sequelize = sz.globalSequelize()
     const User = sequelize.models.User
-    return User.findOne(count)
+    return User.findOne(options)
 }
 
 exports.UpdateUserDB = (user) => {
