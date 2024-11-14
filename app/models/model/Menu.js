@@ -1,5 +1,7 @@
 'use strict'
 
+'use strict'
+
 const {
     define,
     modelName,
@@ -18,11 +20,10 @@ module.exports = define(
             autoIncrement: true,
             comment: '唯一标识ID',
         },
-        type: {
-            type: DataTypes.TINYINT,
-            defaultValue: 0,
+        parentId: {
+            type: DataTypes.INTEGER,
             allowNull: false,
-            comment: '类型(0：系统角色 1：自定义角色)',
+            comment: '上级菜单',
         },
         name: {
             type: DataTypes.STRING,
@@ -30,17 +31,23 @@ module.exports = define(
             allowNull: false,
             comment: '名称',
         },
-        code: {
+        title: {
             type: DataTypes.STRING,
             defaultValue: '',
             allowNull: false,
-            comment: '编码',
+            comment: '标题',
         },
-        remark: {
+        icon: {
             type: DataTypes.STRING,
             defaultValue: '',
             allowNull: false,
-            comment: '备注',
+            comment: 'ICON',
+        },
+        path: {
+            type: DataTypes.STRING,
+            defaultValue: '',
+            allowNull: false,
+            comment: '路径',
         },
         status: {
             type: DataTypes.TINYINT,
@@ -62,9 +69,9 @@ module.exports = define(
         }
     }),
     sync(false),
-    modelName('Role'),
+    modelName('Menu'),
     options({
-        tableName: 't_role',
+        tableName: 't_menu',
         timestamps: true
     })
 )
