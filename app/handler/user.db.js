@@ -32,7 +32,7 @@ hdl.UpdateUserDB = (user) => {
 hdl.DeleteUserDB = (user) => {
     const sequelize = sz.globalSequelize()
     const User = sequelize.models.User
-    return User.destroy({
+    return User.update({ deletedAt: Date.now() / 1000 | 0 }, {
         where: {
             id: user.id
         }
