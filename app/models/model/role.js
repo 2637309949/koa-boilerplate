@@ -5,7 +5,6 @@ const {
     modelName,
     attributes,
     options,
-    associate,
     sync
 } = require('../../comm/sequelize').define
 const { DataTypes } = require('sequelize')
@@ -19,57 +18,33 @@ module.exports = define(
             autoIncrement: true,
             comment: '唯一标识ID',
         },
-        username: {
-            type: DataTypes.STRING,
-            defaultValue: '',
-            allowNull: false,
-            comment: '姓名',
-        },
-        nickname: {
-            type: DataTypes.STRING,
-            defaultValue: '',
-            allowNull: false,
-            comment: '别名',
-        },
-        avatar: {
-            type: DataTypes.STRING,
-            defaultValue: '',
-            allowNull: false,
-            comment: '头像',
-        },
-        gender: {
-            type: DataTypes.TINYINT,
-            defaultValue: 1,
-            allowNull: false,
-            comment: '性别(1:男,2:女)',
-        },
-        birthday: {
-            type: DataTypes.DATE,
-            defaultValue: new Date(0),
-            allowNull: false,
-            comment: '出生日期',
-        },
-        email: {
-            type: DataTypes.STRING,
-            defaultValue: '',
-            allowNull: false,
-            comment: '邮箱',
-        },
-        isEmailVerified: {
+        type: {
             type: DataTypes.TINYINT,
             defaultValue: 0,
             allowNull: false,
-            comment: '是否验证邮箱',
+            comment: '角色类型(0：系统角色 1：自定义角色)',
         },
-        password: {
+        name: {
             type: DataTypes.STRING,
             defaultValue: '',
             allowNull: false,
-            comment: '密码',
+            comment: '角色名称',
+        },
+        code: {
+            type: DataTypes.STRING,
+            defaultValue: '',
+            allowNull: false,
+            comment: '角色编码',
+        },
+        remark: {
+            type: DataTypes.STRING,
+            defaultValue: '',
+            allowNull: false,
+            comment: '备注',
         },
         status: {
             type: DataTypes.TINYINT,
-            defaultValue: 1,
+            defaultValue: 0,
             allowNull: false,
             comment: '状态',
         },
@@ -87,12 +62,9 @@ module.exports = define(
         }
     }),
     sync(false),
-    modelName('User'),
-    associate(function (User, models) {
-        // User.hasMany(models.Article)
-    }),
+    modelName('Role'),
     options({
-        tableName: 't_user',
+        tableName: 't_role',
         timestamps: true
     })
 )

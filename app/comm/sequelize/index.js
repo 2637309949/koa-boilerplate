@@ -18,16 +18,17 @@ async function init(defines, opt = {}) {
         debug('Unable to connect to the database:', error)
     }
     defines.forEach(define => {
+        const { associate, sync,modelName,attributes,options } = define
         const model = sequelize.define(
-            define.modelName,
-            define.attributes,
-            define.options,
+            modelName,
+            attributes,
+            options,
         )
-        if (define.modelName == '') {
+        if (sync) {
             model.sync()
         }
-        define.associate.forEach(associate => {
-            associate(model, sequelize.models)
+        associate.forEach(funk => {
+            funk(model, sequelize.models)
         })
     })
 }
