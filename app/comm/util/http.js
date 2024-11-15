@@ -1,5 +1,6 @@
 'use strict'
 
+const logger = require('../logger')
 const got = require('got')
 const debug = require('debug')('api:http')
 class HttpApi {
@@ -10,27 +11,27 @@ class HttpApi {
       ...options
     }
 
-    debug('Create an instance')
+    logger.debug('Create an instance')
 
     const baseUrl = this.options.baseUrl
     if (!(baseUrl && typeof baseUrl === 'string')) {
       throw new TypeError('`baseUrl` is required.')
     }
 
-    debug(`baseUrl: ${baseUrl}`)
+    logger.debug(`baseUrl: ${baseUrl}`)
 
     const { http, ...httpOptions } = this.options
     this.http = http.extend(httpOptions)
 
-    debug('Configured HTTP client')
+    logger.debug('Configured HTTP client')
   }
 
   async _request(spec) {
     const { path, ...options } = spec
-    debug(`request: ${spec.method} ${path} (${this.options.baseUrl})`)
+    logger.debug(`request: ${spec.method} ${path} (${this.options.baseUrl})`)
 
     const { statusCode, body } = await this.http(path, options)
-    debug(`response: ${statusCode}`)
+    logger.debug(`response: ${statusCode}`)
     return body
   }
 

@@ -2,12 +2,14 @@
 
 const logger = require('../logger')
 const cx = require('../util/context')
-const debug = require('debug')('sequelize')
 const Sequelize = require('sequelize')
 const define = require('./define.js')
 let sequelize = null
 
 function globalSequelize() {
+    if (!sequelize) {
+        throw new TypeError('`sequelize` is required.')
+    }
     return sequelize
 }
 
@@ -15,12 +17,12 @@ async function init(defines, opt = {}) {
     try {
         sequelize = new Sequelize(opt.uri, { pool: opt.pool, logging: logging(null) })
         await sequelize.authenticate()
-        debug('Connection has been established successfully.')
+        logger.info('Connection has been established successfully.')
     } catch (error) {
-        debug('Unable to connect to the database:', error)
+        logger.error('Unable to connect to the database:', error)
     }
     defines.forEach(define => {
-        const { associate, sync,modelName,attributes,options } = define
+        const { associate, sync, modelName, attributes, options } = define
         const model = sequelize.define(
             modelName,
             attributes,
@@ -36,7 +38,7 @@ async function init(defines, opt = {}) {
 }
 
 function withWhere(where) {
-    return { where, attributes: { exclude: ['deletedAt','password'] } }
+    return { where, attributes: { exclude: ['deletedAt', 'password'] } }
 }
 
 function logging(ctx) {
@@ -46,7 +48,7 @@ function logging(ctx) {
         if (sqlMatch) {
             msg = sqlMatch[1]
         }
-        logger.info(`${msg}${reqId?` ${reqId}`:''}`)
+        logger.info(`${msg}${reqId ? ` ${reqId}` : ''}`)
     }
 }
 

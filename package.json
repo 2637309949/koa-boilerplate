@@ -39,6 +39,7 @@
     "dotenv": "^8.2.0",
     "elastic-apm-node": "^3.14.0",
     "got": "^9.6.0",
+    "jsonwebtoken": "^9.0.2",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^7.4.0",
