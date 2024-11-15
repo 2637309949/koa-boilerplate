@@ -7,7 +7,7 @@ const cors = require('../middleware/cors')
 const apmMiddleware = require('../middleware/apm')
 const requestId = require('../middleware/traceid')
 const bodyParser = require('../middleware/parser')
-const errorHandler = require('../middleware/unhandled')
+const unhandled = require('../middleware/unhandled')
 const corsConfig = require('../config/cors')
 const logger = require('../logger')
 
@@ -22,10 +22,10 @@ class App extends Koa {
   }
 
   _configureMiddlewares() {
-    this.use(errorHandler())
-    this.use(apmMiddleware())
     this.use(requestId({ exposeHeader: 'X-Request-Id' }))
     this.use(logging({ logger, serializers }))
+    this.use(unhandled())
+    this.use(apmMiddleware())
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))
     this.use(
       cors({

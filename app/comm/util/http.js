@@ -1,10 +1,7 @@
 'use strict'
 
-const { isUndefined } = require('util')
 const got = require('got')
 const debug = require('debug')('api:http')
-
-
 class HttpApi {
   constructor(options = {}) {
     this.options = {

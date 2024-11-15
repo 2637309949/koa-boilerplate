@@ -1,26 +1,26 @@
 'use strict'
 
-const Response = require('../comm/util/response')
-const logger = require('../comm/logger')
 const {
     InvalidRequestBodyFormat,
     InvalidRequestQueryFormat,
     ApplicationError
 } = require('../comm/error')
-const userDB = require('./user.db')
+const Response = require('../comm/util/response')
 const sz = require('../comm/sequelize')
+const userDB = require('./user.db')
 const hdl = {}
 
 hdl.QueryUser = async ctx => {
-    const { name, pageNo = 1, pageSize = 10 } = ctx.query
-    const rsp = {}
-    if (name === undefined) {
-        throw new InvalidRequestQueryFormat('解析参数失败, name未设置')
+    const { username, pageNo = 1, pageSize = 10 } = ctx.query
+    if (username === undefined) {
+        throw new InvalidRequestQueryFormat('解析参数失败, username未设置')
     }
 
-    const where = { name }
-    const options = sz.QueryOpts(where)
-    const [users, total] = await userDB.QueryUserDB(options, null)
+    const rsp = {}
+    const sequelize = sz.globalSequelize(ctx)
+    const where = { username }
+    const options = sz.withWhere(where)
+    const [users, total] = await userDB.QueryUserDB(ctx, sequelize, options, null)
     rsp.data = users
     rsp.totalCount = total
     rsp.curPage = pageNo
@@ -31,14 +31,15 @@ hdl.QueryUser = async ctx => {
 
 hdl.QueryUserDetail = async ctx => {
     const { id } = ctx.query
-    const rsp = {}
     if (!id) {
         throw new InvalidRequestQueryFormat('解析参数失败, id未设置')
     }
 
+    const rsp = {}
     const where = { id }
-    const options = sz.QueryOpts(where)
-    const user = await userDB.QueryUserDetailDB(options)
+    const options = sz.withWhere(where)
+    const sequelize = sz.globalSequelize(ctx)
+    const user = await userDB.QueryUserDetailDB(ctx, sequelize, options)
     if (!user) {
         throw new ApplicationError(`用户ID ${id} 不存在`)
     }
@@ -48,27 +49,27 @@ hdl.QueryUserDetail = async ctx => {
 }
 
 hdl.UpdateUser = async ctx => {
-    const { id, name, email } = ctx.request.body
-    const rsp = {}
+    const { id, username, email } = ctx.request.body
     if (!id) {
         throw new InvalidRequestBodyFormat('解析参数失败, id未设置')
     }
-    if (!name && !email) {
+    if (!username && !email) {
         throw new InvalidRequestBodyFormat('至少提供一个更新字段，如name或email')
     }
 
-    const updateFields = { id }
-    if (name) updateFields.name = name
-    if (email) updateFields.email = email
-
+    const rsp = {}
     const where = { id }
-    const options = sz.QueryOpts(where)
-    const user = await userDB.QueryUserDetailDB(options)
+    const sequelize = sz.globalSequelize(ctx)
+    const updateFields = { id }
+    if (username) updateFields.username = username
+    if (email) updateFields.email = email
+    const options = sz.withWhere(where)
+    const user = await userDB.QueryUserDetailDB(ctx, sequelize, options)
     if (!user) {
         throw new ApplicationError(`用户ID ${id} 不存在`)
     }
 
-    const updatedUser = await userDB.UpdateUserDB(updateFields)
+    const updatedUser = await userDB.UpdateUserDB(ctx, updateFields)
     if (!updatedUser) {
         throw new ApplicationError('更新用户信息失败')
     }
@@ -79,39 +80,40 @@ hdl.UpdateUser = async ctx => {
 
 hdl.DeleteUser = async ctx => {
     const { id } = ctx.request.body
-    const rsp = {}
     if (!id) {
         throw new InvalidRequestBodyFormat('解析参数失败, id未设置')
     }
 
+    const rsp = {}
     const where = { id }
-    await userDB.DeleteUserDB(where)
+    const sequelize = sz.globalSequelize(ctx)
+    await userDB.DeleteUserDB(ctx, sequelize, where)
     rsp.data = where
     Response.success(ctx, rsp)
 }
 
 hdl.InsertUser = async ctx => {
-    const { name, email } = ctx.request.body
-    const rsp = {}
-    if (!name) {
-        throw new InvalidRequestBodyFormat('解析参数失败, name未设置')
+    const { username, email } = ctx.request.body
+    if (!username) {
+        throw new InvalidRequestBodyFormat('解析参数失败, username未设置')
     }
     if (!email) {
         throw new InvalidRequestBodyFormat('解析参数失败, email未设置')
     }
 
     const insertFields = {}
-    if (name) insertFields.name = name
+    if (username) insertFields.username = username
     if (email) insertFields.email = email
 
+    const rsp = {}
     const where = { email }
-    const options = sz.QueryOpts(where)
-    const user = await userDB.QueryUserDetailDB(options)
+    const sequelize = sz.globalSequelize(ctx)
+    const options = sz.withWhere(where)
+    const user = await userDB.QueryUserDetailDB(ctx, sequelize, options)
     if (user) {
         throw new ApplicationError(`用户Email ${email} 已存在`)
     }
-
-    const insertedUser = await userDB.InsertUserDB(insertFields)
+    const insertedUser = await userDB.InsertUserDB(ctx, sequelize, insertFields)
     if (!insertedUser) {
         throw new ApplicationError('新增用户失败')
     }
@@ -122,7 +124,6 @@ hdl.InsertUser = async ctx => {
 
 hdl.SaveUser = async ctx => {
     const { id, name, email } = ctx.request.body
-    const rsp = {}
     if (!name) {
         throw new InvalidRequestBodyFormat('解析参数失败, name未设置')
     }
@@ -134,23 +135,26 @@ hdl.SaveUser = async ctx => {
     if (name) updateFields.name = name
     if (email) updateFields.email = email
 
+    const rsp = {}
     const where = {}
     if (id) {
         where.id = id
     } else {
         where.email = email
     }
-    const options = sz.QueryOpts(where)
-    const user = await userDB.QueryUserDetailDB(options)
+
+    const sequelize = sz.globalSequelize(ctx)
+    const options = sz.withWhere(where)
+    const user = await userDB.QueryUserDetailDB(ctx, sequelize, options)
     if (!user) {
-        const insertedUser = await userDB.InsertUserDB(updateFields)
+        const insertedUser = await userDB.InsertUserDB(ctx, sequelize, updateFields)
         if (!insertedUser) {
             throw new ApplicationError('新增用户失败')
         }
         rsp.data = insertedUser
     } else {
         updateFields.id = user.id
-        const updatedUser = await userDB.UpdateUserDB(updateFields)
+        const updatedUser = await userDB.UpdateUserDB(ctx, sequelize, updateFields)
         if (!updatedUser) {
             throw new ApplicationError('更新用户信息失败')
         }

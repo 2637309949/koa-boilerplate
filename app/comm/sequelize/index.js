@@ -1,5 +1,7 @@
 'use strict'
 
+const logger = require('../logger')
+const cx = require('../util/context')
 const debug = require('debug')('sequelize')
 const Sequelize = require('sequelize')
 const define = require('./define.js')
@@ -10,6 +12,7 @@ function globalSequelize() {
 }
 
 async function init(defines, opt = {}) {
+    // const logging = (...msg) => console.log(msg)
     try {
         sequelize = new Sequelize(opt.uri, { pool: opt.pool })
         await sequelize.authenticate()
@@ -33,11 +36,16 @@ async function init(defines, opt = {}) {
     })
 }
 
-function QueryOpts(where) {
+function withWhere(where) {
     return { where, attributes: { exclude: ['deletedAt','password'] } }
 }
 
+function logging(ctx) {
+    return msg => logger.info({ event: 'sequelize' }, `${msg} (${cx.getReqId(ctx)})`)
+}
+
 module.exports.init = init
-module.exports.QueryOpts = QueryOpts
+module.exports.logging = logging
+module.exports.withWhere = withWhere
 module.exports.globalSequelize = globalSequelize
 module.exports.define = define

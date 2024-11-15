@@ -1,10 +1,9 @@
 'use strict'
-
 const sz = require('../comm/sequelize')
-const hdl = {}
 
-hdl.QueryUserDB = async (options, ...count) => {
-    const sequelize = sz.globalSequelize()
+const hdl = {}
+hdl.QueryUserDB = async (ctx, sequelize, options, ...count) => {
+    options.logging = sz.logging(ctx)
     const User = sequelize.models.User
     let total = 0
     if (count.length > 0) {
@@ -13,36 +12,31 @@ hdl.QueryUserDB = async (options, ...count) => {
     return [await User.findAll(options), total]
 }
 
-hdl.QueryUserDetailDB = (options) => {
-    const sequelize = sz.globalSequelize()
+hdl.QueryUserDetailDB = (ctx, sequelize, options) => {
+    options.logging = sz.logging(ctx)
     const User = sequelize.models.User
     return User.findOne(options)
 }
 
-hdl.UpdateUserDB = (user) => {
-    const sequelize = sz.globalSequelize()
+hdl.UpdateUserDB = (ctx, sequelize, user) => {
+    const options = { where: { id: user.id } }
+    options.logging = sz.logging(ctx)
     const User = sequelize.models.User
-    return User.update(user, {
-        where: {
-            id: user.id
-        }
-    })
+    return User.update(user, options)
 }
 
-hdl.DeleteUserDB = (user) => {
-    const sequelize = sz.globalSequelize()
+hdl.DeleteUserDB = (ctx, sequelize, user) => {
+    const options = { where: { id: user.id } }
+    options.logging = sz.logging(ctx)
     const User = sequelize.models.User
-    return User.update({ deletedAt: Date.now() / 1000 | 0 }, {
-        where: {
-            id: user.id
-        }
-    })
+    return User.update({ deletedAt: Date.now() / 1000 | 0 }, options)
 }
 
-hdl.InsertUserDB = async (user) => {
-    const sequelize = sz.globalSequelize()
+hdl.InsertUserDB = async (ctx, sequelize, user) => {
+    const options = {}
+    options.logging = sz.logging(ctx)
     const User = sequelize.models.User
-    const ret = await User.create(user)
+    const ret = await User.create(user, options)
     return ret
 }
 
