@@ -38,7 +38,7 @@ if (!module.parent) {
   sequelize.init(defines, config.db)
   
   app.listen(config.port, config.host, () => {
-    logger.info({ event: 'execute' }, `listening on ${config.host}:${config.port}, in ${config.env}`)
+    logger.info(`listening on ${config.host}:${config.port}, in ${config.env}`)
   }).on('error', handleError)
 
   const errors = ['unhandledRejection', 'uncaughtException']

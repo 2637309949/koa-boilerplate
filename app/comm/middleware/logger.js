@@ -61,34 +61,23 @@ module.exports = (options = {}) => {
         throw new TypeError('Logger required')
     }
 
-    return async function logging(ctx, next) {
-        // Try to get the request id
+    return async function (ctx, next) {
         const reqId = getReqId(ctx)
             || ctx.state.reqId
             || ctx.reqId
             || ctx.req.id
             || ctx.get('X-Request-Id')
         const startTime = new Date()
-        ctx.log = logger.child({
-            serializers: (!!serializers ? serializers : {})
-        })
+        ctx.log = logger.child({}, { serializers: (!!serializers ? serializers : {})})
 
         const reqLogLevel = getRequestLogLevel(ctx)
-        ctx.log[reqLogLevel](
-            { req: ctx, event: 'request' },
-            `${ctx.method} ${ctx.path} (${reqId})`
-        )
+        ctx.log[reqLogLevel]({ req: ctx }, `${ctx.method} ${ctx.path} ${reqId}`)
 
         // Handle response logging when response is sent
         ctx.res.on('finish', () => {
-
             ctx.duration = new Date() - startTime
             const resLogLevel = getResponseLogLevel(ctx)
-            ctx.log[resLogLevel](
-                { req: ctx, res: ctx, event: 'response' },
-                `${ctx.status} ${ctx.message} - ${ctx.duration}ms (${reqId})`
-            )
-
+            ctx.log[resLogLevel]({ res: ctx }, `${ctx.status} ${ctx.message} - ${ctx.duration}ms ${reqId}`)
             // Remove log object to mitigate accidental leaks
             delete ctx.log
         })
@@ -97,10 +86,7 @@ module.exports = (options = {}) => {
             await next()
         } catch (err) {
             const errLogLevel = getErrorLogLevel(ctx)
-            ctx.log[errLogLevel](
-                { err, event: 'error' },
-                `Unhandled exception occured (${reqId})`
-            )
+            ctx.log[errLogLevel]({ err, event: 'error' }, `Unhandled exception occured (${reqId})`)
             throw err
         }
     }
