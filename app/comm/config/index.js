@@ -7,6 +7,7 @@ const {
   APP_NAME = 'koa-boilerplate', 
   APP_HOST = '0.0.0.0', 
   APP_PORT = 7070, 
+  JWT_SECRET_KEY = '87hsd079qhw07gq7h'
 } = process.env
 
 dotenv.config()
@@ -16,7 +17,8 @@ const configs = {
     env: NODE_ENV,
     name: APP_NAME,
     host: APP_HOST,
-    port: APP_PORT
+    port: APP_PORT,
+    jwtSecretKey: JWT_SECRET_KEY,
   },
   production: {
     port: APP_PORT
