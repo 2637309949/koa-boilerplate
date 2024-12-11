@@ -19,6 +19,7 @@ hdl.register = async ctx => {
         email,
         password,
         confirmPassword } = ctx.request.body
+    const sequelize = sz.globalSequelize(ctx)
     if (username === undefined) {
         throw new InvalidRequestBodyFormat('解析参数失败, username未设置')
     }
@@ -36,7 +37,6 @@ hdl.register = async ctx => {
     const rsp = {}
     const where = { email }
     const options = sz.withWhere(where)
-    const sequelize = sz.globalSequelize(ctx)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
     if (user) {
         throw new ApplicationError(`用户Email ${email} 已存在`)
@@ -54,7 +54,7 @@ hdl.register = async ctx => {
     }
 
     const hashpwd = await api.user.hashPassword(password)
-    const insertFields = {username, email, password: hashpwd}
+    const insertFields = { username, email, password: hashpwd }
     const iUser = await userDB.insertUserDB(ctx, sequelize, insertFields)
     if (!iUser) {
         throw new ApplicationError('新增用户失败')
@@ -70,6 +70,7 @@ hdl.login = async ctx => {
     const {
         email,
         password } = ctx.request.body
+    const sequelize = sz.globalSequelize(ctx)
     if (email === undefined) {
         throw new InvalidRequestBodyFormat('解析参数失败, email未设置')
     }
@@ -80,7 +81,6 @@ hdl.login = async ctx => {
     const rsp = {}
     const where = { email }
     const options = { where, attributes: { exclude: ['deletedAt'] } }
-    const sequelize = sz.globalSequelize(ctx)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
     if (!user) {
         throw new ApplicationError(`用户Email ${email} 不存在`)
@@ -112,10 +112,10 @@ hdl.login = async ctx => {
 }
 
 hdl.profile = async ctx => {
+    const sequelize = sz.globalSequelize(ctx)
     const rsp = {}
     const where = { id }
     const options = sz.withWhere(where)
-    const sequelize = sz.globalSequelize(ctx)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
     if (!user) {
         throw new ApplicationError(`用户ID ${id} 不存在`)

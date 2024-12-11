@@ -15,9 +15,9 @@ function globalSequelize() {
 
 async function init(defines, opt = {}) {
     try {
-        sequelize = new Sequelize(opt.uri, { pool: opt.pool, logging: logging(null) })
+        sequelize = new Sequelize(opt.uri, { pool: opt.pool, logging: logging() })
         await sequelize.authenticate()
-        logger.info('Connection has been established successfully.')
+        logger.info('Connection has been established successfully')
     } catch (error) {
         logger.error('Unable to connect to the database:', error)
     }
@@ -42,13 +42,13 @@ function withWhere(where) {
 }
 
 function logging(ctx) {
-    let reqId = cx.getReqId(ctx)
+    let logger = cx.getLogger(ctx)
     return msg => {
-        const sqlMatch = msg.match(/^Executing \(default\): (.*)/);
+        const sqlMatch = msg.match(/^Executing \(default\): (.*);/);
         if (sqlMatch) {
             msg = sqlMatch[1]
         }
-        logger.info(`${msg}${reqId ? ` ${reqId}` : ''}`)
+        logger.info(msg)
     }
 }
 

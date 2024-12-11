@@ -1,38 +1,6 @@
 'use strict'
 
-const defaultSerializers = {
-    req: (ctx = {}) => {
-        return {
-            method: ctx.method,
-            path: ctx.path,
-            url: ctx.url,
-            headers: ctx.headers,
-            protocol: ctx.protocol,
-            ip: ctx.ip,
-            query: ctx.query
-        }
-    },
-    res: (ctx = {}) => {
-        return {
-            statusCode: ctx.status,
-            duration: ctx.duration,
-            type: ctx.type,
-            headers: (ctx.response || {}).headers
-        }
-    },
-    err: (err) => {
-        if (!(err instanceof Error)) {
-            return err
-        }
-        return {
-            name: err.name,
-            message: err.message,
-            code: err.code,
-            status: err.status,
-            stack: err.stack
-        }
-    }
-}
+const logger = require('../logger')
 
 function defaultGetResponseLogLevel(ctx = {}) {
     const status = ctx.status
@@ -46,38 +14,31 @@ function defaultGetResponseLogLevel(ctx = {}) {
 
 module.exports = (options = {}) => {
     const {
-        logger = null,
-        getReqId = () => null,
         getRequestLogLevel = () => 'info',
         getResponseLogLevel = defaultGetResponseLogLevel,
         getErrorLogLevel = () => 'error'
     } = options
-    const serializers = {
-        ...defaultSerializers,
-        ...options.serializers
-    }
-
-    if (typeof logger !== 'object' || logger === null) {
-        throw new TypeError('Logger required')
-    }
 
     return async function (ctx, next) {
-        const reqId = getReqId(ctx)
-            || ctx.state.reqId
-            || ctx.reqId
-            || ctx.req.id
-            || ctx.get('X-Request-Id')
+        ctx.log = logger.child({ ctx })
         const startTime = new Date()
-        ctx.log = logger.child({}, { serializers: (!!serializers ? serializers : {})})
-
         const reqLogLevel = getRequestLogLevel(ctx)
-        ctx.log[reqLogLevel]({ req: ctx }, `${ctx.method} ${ctx.path} ${reqId}`)
+        ctx.log[reqLogLevel](`${ctx.method} ${ctx.url}`)
+
+        if (ctx.request.is('json')) {
+            ctx.log[reqLogLevel](`Request Body (JSON): ${JSON.stringify(ctx.request.body)}`)
+        } else if (ctx.request.is('urlencoded')) {
+            ctx.log[reqLogLevel](`Request Body (Form): ${JSON.stringify(ctx.request.body)}`)
+        }
 
         // Handle response logging when response is sent
         ctx.res.on('finish', () => {
             ctx.duration = new Date() - startTime
             const resLogLevel = getResponseLogLevel(ctx)
-            ctx.log[resLogLevel]({ res: ctx }, `${ctx.status} ${ctx.message} - ${ctx.duration}ms ${reqId}`)
+            if (ctx.response.is('json')) {
+                ctx.log[resLogLevel](`Response Body (JSON): ${JSON.stringify(ctx.response.body)}`)
+            }
+            ctx.log[resLogLevel](`${ctx.status} ${ctx.duration}ms`)
             // Remove log object to mitigate accidental leaks
             delete ctx.log
         })
@@ -86,7 +47,7 @@ module.exports = (options = {}) => {
             await next()
         } catch (err) {
             const errLogLevel = getErrorLogLevel(ctx)
-            ctx.log[errLogLevel]({ err, event: 'error' }, `Unhandled exception occured (${reqId})`)
+            requestLogger[errLogLevel](`Unhandled exception occured`)
             throw err
         }
     }

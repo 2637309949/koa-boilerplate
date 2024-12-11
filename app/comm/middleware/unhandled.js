@@ -1,6 +1,6 @@
 'use strict'
 
-const logger = require('../logger')
+const cx = require('../util/context')
 const Response = require('../util/response')
 const {
   InvalidRequestBodyFormat,
@@ -10,15 +10,11 @@ const {
 
 module.exports = () => {
   return async function (ctx, next) {
-    // Try to get the request id
-    const reqId = ctx.state.reqId
-    || ctx.reqId
-    || ctx.req.id
-    || ctx.get('X-Request-Id')
+    let logger = cx.getLogger(ctx)
     try {
       await next()
       if (!ctx.body && (!ctx.status || ctx.status === 404)) {
-        logger.error({ event: 'error' }, 'Unhandled by router')
+        logger.error(`Unhandled by router`)
         Response.notFound(ctx, Response.UNKNOWN_ENDPOINT)
         return
       }
@@ -33,7 +29,7 @@ module.exports = () => {
         Response.error(ctx, { ...Response.INTERNAL_ERROR, message: err.message })
         return
       }
-      logger.error({ err, event: 'error' }, `Unhandled exception occured (${reqId})`)
+      logger.error(`Unhandled exception occured ${err}`)
       Response.internalServerError(ctx, Response.UNKNOWN_ERROR)
     }
   }

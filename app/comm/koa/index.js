@@ -2,15 +2,13 @@
 
 const Koa = require('koa')
 const logging = require('../middleware/logger')
-const serializers = require('../logger/http').serializers
 const cors = require('../middleware/cors')
 const apmMiddleware = require('../middleware/apm')
 const requestId = require('../middleware/traceid')
 const bodyParser = require('../middleware/parser')
 const unhandled = require('../middleware/unhandled')
+const timemark = require('../middleware/timemark')
 const corsConfig = require('../config/cors')
-const logger = require('../logger')
-
 class App extends Koa {
   constructor(...params) {
     super(...params)
@@ -22,8 +20,9 @@ class App extends Koa {
   }
 
   _configureMiddlewares() {
+    this.use(logging())
+    this.use(timemark())
     this.use(requestId({ exposeHeader: 'X-Request-Id' }))
-    this.use(logging({ logger, serializers }))
     this.use(unhandled())
     this.use(apmMiddleware())
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))

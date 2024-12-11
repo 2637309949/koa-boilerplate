@@ -17,7 +17,7 @@ function handleError(err, ctx) {
   }
 
   if (!ctx) {
-    logger.error({ err, event: 'error' }, 'Unhandled exception occured')
+    logger.error('Unhandled exception occured')
   }
 }
 
@@ -25,7 +25,7 @@ async function terminate(signal) {
   try {
     await app.terminate()
   } finally {
-    logger.info({ signal, event: 'terminate' }, 'App is terminated')
+    logger.info('App is terminated')
     process.kill(process.pid, signal)
   }
 }
@@ -38,7 +38,7 @@ if (!module.parent) {
   sequelize.init(defines, config.db)
   
   app.listen(config.port, config.host, () => {
-    logger.info(`listening on ${config.host}:${config.port}, in ${config.env}`)
+    logger.info(`Listening on ${config.host}:${config.port}, in ${config.env}`)
   }).on('error', handleError)
 
   const errors = ['unhandledRejection', 'uncaughtException']

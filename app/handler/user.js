@@ -11,16 +11,25 @@ const userDB = require('./user.db')
 const hdl = {}
 
 hdl.queryUser = async ctx => {
-    const { username, pageNo = 1, pageSize = 10 } = ctx.query
+    const timemark = ctx.timeMark
+    timemark.init("queryUser")
+
+    const sequelize = sz.globalSequelize(ctx)
+    timemark.mark("globalSequelize")
+
+    const {
+        username,
+        pageNo = 1,
+        pageSize = 10 } = ctx.query
     if (username === undefined) {
         throw new InvalidRequestQueryFormat('解析参数失败, username未设置')
     }
 
     const rsp = {}
-    const sequelize = sz.globalSequelize(ctx)
     const where = { username }
     const options = sz.withWhere(where)
     const [users, total] = await userDB.queryUserDB(ctx, sequelize, options, null)
+    timemark.mark("queryUserDB")
     rsp.data = users
     rsp.totalCount = total
     rsp.curPage = pageNo
@@ -30,6 +39,10 @@ hdl.queryUser = async ctx => {
 }
 
 hdl.queryUserDetail = async ctx => {
+    const timemark = ctx.timeMark
+    timemark.init("queryUserDetail")
+
+    const sequelize = sz.globalSequelize(ctx)
     const { id } = ctx.query
     if (!id) {
         throw new InvalidRequestQueryFormat('解析参数失败, id未设置')
@@ -38,8 +51,8 @@ hdl.queryUserDetail = async ctx => {
     const rsp = {}
     const where = { id }
     const options = sz.withWhere(where)
-    const sequelize = sz.globalSequelize(ctx)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
+    timemark.mark("queryUserDetailDB")
     if (!user) {
         throw new ApplicationError(`用户ID ${id} 不存在`)
     }
@@ -49,7 +62,16 @@ hdl.queryUserDetail = async ctx => {
 }
 
 hdl.updateUser = async ctx => {
-    const { id, username, email } = ctx.request.body
+    const timemark = ctx.timeMark
+    timemark.init("updateUser")
+
+    const sequelize = sz.globalSequelize(ctx)
+    timemark.mark("globalSequelize")
+
+    const {
+        id,
+        username,
+        email } = ctx.request.body
     if (!id) {
         throw new InvalidRequestBodyFormat('解析参数失败, id未设置')
     }
@@ -59,12 +81,12 @@ hdl.updateUser = async ctx => {
 
     const rsp = {}
     const where = { id }
-    const sequelize = sz.globalSequelize(ctx)
     const updateFields = { id }
     if (username) updateFields.username = username
     if (email) updateFields.email = email
     const options = sz.withWhere(where)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
+    timemark.mark("queryUserDetailDB")
     if (!user) {
         throw new ApplicationError(`用户ID ${id} 不存在`)
     }
@@ -79,6 +101,11 @@ hdl.updateUser = async ctx => {
 }
 
 hdl.deleteUser = async ctx => {
+    const timemark = ctx.timeMark
+    timemark.init("deleteUser")
+
+    const sequelize = sz.globalSequelize(ctx)
+    timemark.mark("globalSequelize")
     const { id } = ctx.request.body
     if (!id) {
         throw new InvalidRequestBodyFormat('解析参数失败, id未设置')
@@ -86,14 +113,22 @@ hdl.deleteUser = async ctx => {
 
     const rsp = {}
     const where = { id }
-    const sequelize = sz.globalSequelize(ctx)
     await userDB.deleteUserDB(ctx, sequelize, where)
+    timemark.mark("deleteUserDB")
+
     rsp.data = where
     response.success(ctx, rsp)
 }
 
 hdl.insertUser = async ctx => {
-    const { username, email } = ctx.request.body
+    const timemark = ctx.timeMark
+    timemark.init("insertUser")
+
+    const sequelize = sz.globalSequelize(ctx)
+    timemark.mark("globalSequelize")
+    const { 
+        username, 
+        email } = ctx.request.body
     if (!username) {
         throw new InvalidRequestBodyFormat('解析参数失败, username未设置')
     }
@@ -107,13 +142,14 @@ hdl.insertUser = async ctx => {
 
     const rsp = {}
     const where = { email }
-    const sequelize = sz.globalSequelize(ctx)
     const options = sz.withWhere(where)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
+    timemark.mark("queryUserDetailDB")
     if (user) {
         throw new ApplicationError(`用户Email ${email} 已存在`)
     }
     const insertedUser = await userDB.insertUserDB(ctx, sequelize, insertFields)
+    timemark.mark("insertUserDB")
     if (!insertedUser) {
         throw new ApplicationError('新增用户失败')
     }
@@ -123,7 +159,16 @@ hdl.insertUser = async ctx => {
 }
 
 hdl.saveUser = async ctx => {
-    const { id, name, email } = ctx.request.body
+    const timemark = ctx.timeMark
+    timemark.init("saveUser")
+
+    const sequelize = sz.globalSequelize(ctx)
+    timemark.mark("globalSequelize")
+
+    const { 
+        id, 
+        name, 
+        email } = ctx.request.body
     if (!name) {
         throw new InvalidRequestBodyFormat('解析参数失败, name未设置')
     }
@@ -143,11 +188,12 @@ hdl.saveUser = async ctx => {
         where.email = email
     }
 
-    const sequelize = sz.globalSequelize(ctx)
     const options = sz.withWhere(where)
     const user = await userDB.queryUserDetailDB(ctx, sequelize, options)
+    timemark.mark("queryUserDetailDB")
     if (!user) {
         const insertedUser = await userDB.insertUserDB(ctx, sequelize, updateFields)
+        timemark.mark("insertUserDB")
         if (!insertedUser) {
             throw new ApplicationError('新增用户失败')
         }
@@ -155,6 +201,7 @@ hdl.saveUser = async ctx => {
     } else {
         updateFields.id = user.id
         const updatedUser = await userDB.updateUserDB(ctx, sequelize, updateFields)
+        timemark.mark("updateUserDB")
         if (!updatedUser) {
             throw new ApplicationError('更新用户信息失败')
         }
