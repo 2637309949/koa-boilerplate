@@ -9,6 +9,7 @@ const {
     sync
 } = require('../../comm/sequelize').define
 const { DataTypes } = require('sequelize')
+const moment = require('moment')
 
 module.exports = define(
     attributes({
@@ -48,6 +49,10 @@ module.exports = define(
             defaultValue: new Date(0),
             allowNull: false,
             comment: '出生日期',
+            get() {
+                const date = this.getDataValue('birthday')
+                return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : null
+            }
         },
         email: {
             type: DataTypes.STRING,
@@ -78,12 +83,20 @@ module.exports = define(
             defaultValue: DataTypes.NOW,
             allowNull: false,
             comment: '创建时间',
+            get() {
+                const date = this.getDataValue('createdAt')
+                return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : null
+            }
         },
         updatedAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW,
             allowNull: false,
             comment: '更新时间',
+            get() {
+                const date = this.getDataValue('updatedAt')
+                return date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : null
+            }
         }
     }),
     sync(false),
