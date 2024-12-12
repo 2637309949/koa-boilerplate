@@ -17,7 +17,8 @@
   },
   "main": "app",
   "scripts": {
-    "start": "node app",
+    "stop": "pm2 stop app",
+    "start": "pm2 start app -i max",
     "dev": "cross-env NODE_ENV=development nodemon --quiet",
     "docs": "docsify serve docs",
     "test": "NODE_ENV=test jest --passWithNoTests",
@@ -46,6 +47,7 @@
     "koa-router": "^7.4.0",
     "moment": "^2.30.1",
     "mysql2": "^3.11.3",
+    "pm2": "^5.4.3",
     "ramda": "^0.30.1",
     "sequelize": "^6.37.5",
     "sqlite3": "^5.1.7",

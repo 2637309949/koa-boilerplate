@@ -4,7 +4,6 @@ const cx = require('../util/context')
 module.exports = (options = {}) => {
     const {
     } = options
-
     return async function (ctx, next) {
         ctx.timeMark = {
             init(format) {
