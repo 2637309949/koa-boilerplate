@@ -20,9 +20,9 @@ class App extends Koa {
   }
 
   _configureMiddlewares() {
+    this.use(requestId({ exposeHeader: 'X-Request-Id' }))
     this.use(logging())
     this.use(timemark())
-    this.use(requestId({ exposeHeader: 'X-Request-Id' }))
     this.use(unhandled())
     this.use(apmMiddleware())
     this.use(bodyParser({ enableTypes: ['json'], jsonLimit: '10mb' }))

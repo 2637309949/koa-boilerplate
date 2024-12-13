@@ -9,8 +9,7 @@
     "restful",
     "api",
     "koa-boilerplate",
-    "boilerplate",
-    "skeleton"
+    "boilerplate"
   ],
   "engines": {
     "node": ">= 12.22.0"

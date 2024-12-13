@@ -26,9 +26,9 @@ module.exports = (options = {}) => {
         ctx.log[reqLogLevel](`${ctx.method} ${ctx.url}`)
 
         if (ctx.request.is('json')) {
-            ctx.log[reqLogLevel](`Request Body (JSON): ${JSON.stringify(ctx.request.body)}`)
+            ctx.log[reqLogLevel](`Request (JSON): ${JSON.stringify(ctx.request.body)}`)
         } else if (ctx.request.is('urlencoded')) {
-            ctx.log[reqLogLevel](`Request Body (Form): ${JSON.stringify(ctx.request.body)}`)
+            ctx.log[reqLogLevel](`Request (Form): ${JSON.stringify(ctx.request.body)}`)
         }
 
         // Handle response logging when response is sent
@@ -36,9 +36,9 @@ module.exports = (options = {}) => {
             ctx.duration = new Date() - startTime
             const resLogLevel = getResponseLogLevel(ctx)
             if (ctx.response.is('json')) {
-                ctx.log[resLogLevel](`Response Body (JSON): ${JSON.stringify(ctx.response.body)}`)
+                ctx.log[resLogLevel](`Response (JSON): ${JSON.stringify(ctx.response.body)}`)
             }
-            ctx.log[resLogLevel](`${ctx.status} ${ctx.duration}ms`)
+            ctx.log[resLogLevel](`Response (STATE): ${ctx.status} ${ctx.duration}ms`)
             // Remove log object to mitigate accidental leaks
             delete ctx.log
         })
